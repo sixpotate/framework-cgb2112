@@ -4,6 +4,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 public class SpringRunner {
 
+    // @Component
     public static void main(String[] args) {
         // 1. 加载Spring
         System.out.println("1. 加载Spring，开始……");

@@ -160,7 +160,7 @@ public class SpringRunner {
     - 此方法仍是根据传入的`beanName`获取对象，并且根据传入的`beanClass`进行类型转换
 - 使用的`@Bean`注解可以传入`String`类型的参数，如果传入，则此注解对应的方法的返回结果的`beanName`就是`@Bean`注解中传入的`String`参数值
 
-## 4. 通过Spring创建对象--
+## 4. 通过Spring创建对象--组件扫描
 
 **演示案例：spring02**
 
@@ -187,7 +187,35 @@ public class SpringRunner {
     UserMapper userMapper = ac.getBean("userMapper", UserMapper.class);
     ```
 
-    
+关于以上代码：
+
+- 在创建`AnnotationConfigApplicationContext`时传入的参数是一个`basePackages`，即多个“根包”，它会使得Spring框架**扫描**这个包及其子孙包中的所有类，并尝试创建这些包中的组件的对象
+  - `AnnotationConfigApplicationContext`的构造方法设计的是`String...`类型的参数，即可变参数，当需要输入多个包名时，各包名使用逗号隔开即可
+  - 推荐传入的包名是更加具体的，但不需要特别精准，只需要保证不会扫描到非自定义的包即可，例如包名肯定不会包含项目的依赖项的包
+- 即使有了组件扫描，Spring也不会直接创建包下所有类的对象，仅当类上添加了组件注解，才会被Spring视为“组件”，Spring才会创建对应的类的对象
+- 当`getBean()`时，由Spring创建的组件类的对象，默认的名称都是将首字母改为小写
+  - 以上规则仅适用于：类名中的第1个字母是大写，且第2个字母是小写的情况，如果类名不符合这种情况，则`getBean()`时传入的名称就是类名（与类名完全相同的字符串）
+
+关于组件：
+
+- 在Spring框架中，可用的组件注解有：
+  - `@Component`：通用组件注解
+  - `@Controller`：应该添加在“控制器类”上
+  - `@Service`：应该添加在“业务类”上
+  - `@Repository`：应该添加在“数据存取类”上
+- 另外，`@Configuration`是一种特殊的组件，应该添加在“配置类”上，当执行组件扫描时，添加了`@Configuration`注解的类也会被创建对象
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
