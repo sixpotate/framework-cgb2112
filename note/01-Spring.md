@@ -205,6 +205,47 @@ public class SpringRunner {
   - `@Repository`：应该添加在“数据存取类”上
 - 另外，`@Configuration`是一种特殊的组件，应该添加在“配置类”上，当执行组件扫描时，添加了`@Configuration`注解的类也会被创建对象
 
+其它：
+
+- 可以在`@Component`等组件注解（不包含`@Configuration`）中配置字符串参数，以显式的指定Bean的名称
+
+- 可以使用一个配置类，在配置类上通过`@ComponentScan`来指定组件扫描的包，并在加载Spring时，传入此配置类即可，例如：
+
+  ```java
+  package cn.tedu.spring;
+  
+  import org.springframework.context.annotation.ComponentScan;
+  import org.springframework.context.annotation.Configuration;
+  
+  @Configuration
+  @ComponentScan("cn.tedu.spring")
+  public class SpringConfig {
+  }
+  ```
+
+  ```java
+  // 以下是加载Spring的代码片段
+  AnnotationConfigApplicationContext ac
+  		= new AnnotationConfigApplicationContext(SpringConfig.class);
+  ```
+
+  在使用`@ComponentScan`时，也可以传入多个包名，例如：
+
+  ```java
+  @ComponentScan({"cn.tedu.spring.controller", "cn.tedu.spring.service"})
+  ```
+
+## 5. 关于2种通过Spring创建对象的做法
+
+以上分别介绍了使用`@Bean`方法和使用组件扫描的方式使得Spring创建对象的做法，在实际应用中：
+
+- 使用`@Bean`方法可用在所有场景，但是使用过程相对繁琐
+- 使用组件扫描的做法只适用于自定义的类型（这些类是你自己编写出来的），使用过程非常便捷
+
+所以，当需要被Spring创建对象的类型是自定义的，应该使用组件扫描的做法，如果不是自定义的，只能使用`@Bean`方法。这2种做法在实际的项目开发中都会被使用到！
+
+
+
 
 
 

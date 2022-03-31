@@ -9,7 +9,7 @@ public class SpringRunner {
         // 1. 加载Spring
         System.out.println("1. 加载Spring，开始……");
         AnnotationConfigApplicationContext ac
-                = new AnnotationConfigApplicationContext("cn.tedu.spring");
+                = new AnnotationConfigApplicationContext(SpringConfig.class);
         System.out.println("1. 加载Spring，完成！");
         System.out.println();
 
