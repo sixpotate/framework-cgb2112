@@ -242,7 +242,158 @@ public class SpringRunner {
 - 使用`@Bean`方法可用在所有场景，但是使用过程相对繁琐
 - 使用组件扫描的做法只适用于自定义的类型（这些类是你自己编写出来的），使用过程非常便捷
 
-所以，当需要被Spring创建对象的类型是自定义的，应该使用组件扫描的做法，如果不是自定义的，只能使用`@Bean`方法。这2种做法在实际的项目开发中都会被使用到！
+所以，当需要被Spring创建对象的类型是自定义的，应该使用组件扫描的做法，如果不是自定义的，只能使用`@Bean`方法。**这2种做法在实际的项目开发中都会被使用到**！
+
+## 6. Spring管理的对象的作用域
+
+由Spring管理的对象的作用域默认是单例的（并不是单例模式），对于同一个Bean，无论获取多少次，得到的都是同一个对象！如果希望某个被Spring管理的对象不是单例的，可以在类上添加`@Scope("prototype")`注解。
+
+并且，在单例的情况下，默认不是懒加载的，还可以通过`@Lazy`注解控制它是否为懒加载模式！所谓的懒加载，就是“不要逼不得已不创建对象”。
+
+## 7. Spring管理的对象的生命周期
+
+由Spring创建并管理对象，则开发人员就没有了对象的控制权，无法对此对象的历程进行干预，而Spring允许在类中自定义最多2个方法，分别表示初始化方法和销毁方法，并且，Spring会在创建对象之后就执行初始化方法，在销毁对象之前执行销毁方法。
+
+关于这2个方法，你可以按需添加，例如，当你只需要干预销毁过程时，你可以只定义销毁的方法，不需要定义初始化方法。
+
+关于这2个方法的声明：
+
+- 访问权限：推荐使用`public`
+- 返回值类型：推荐使用`void`
+- 方法名称：自定义
+- 参数列表：推荐为空
+
+然后，需要在初始化方法的声明之前添加`@PostConstruct`注解，在销毁方法的声明之前添加`@PreDestroy`注解。
+
+例如：
+
+```java
+package cn.tedu.spring;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+@Component
+public class UserMapper {
+
+    public UserMapper() {
+        System.out.println("\tUserMapper.UserMapper()");
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println("\tUserMapper.init()");
+    }
+
+    @PreDestroy
+    public void destroy() {
+        System.out.println("\tUserMapper.destroy()");
+    }
+
+}
+```
+
+注意：仅当类的对象被Spring管理且是单例的，才有讨论生命周期的价值，否则，不讨论生命周期。
+
+如果某个类的对象是通过`@Bean`方法被Spring管理的，并且这个类不是自定义的，可以在`@Bean`注解中配置`initMethod`和`destroyMethod`这2个属性（它们的值就是方法名称，例如`destroyMethod="close"`），将这个类中的方法指定为生命周期方法。
+
+## 8. Spring的自动装配机制
+
+Spring的自动装配机制表现为：当你需要某个对象时，可以使用特定的语法，而Spring就会尝试从容器找到合适的值，并赋值到对应的位置！
+
+最典型的表现就是在类的属性上添加`@Autowired`注解，Spring就会尝试从容器中找到合适的值为这个属性赋值！
+
+例如有如下代码：
+
+**SpringConfig.java**
+
+```java
+package cn.tedu.spring;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ComponentScan("cn.tedu.spring")
+public class SpringConfig {
+}
+```
+
+**UserMapper.java**
+
+```java
+package cn.tedu.spring;
+
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class UserMapper {
+
+    public void insert() {
+        System.out.println("UserMapper.insert() >> 将用户数据写入到数据库中……");
+    }
+
+}
+```
+
+**UserController.java**
+
+```java
+package cn.tedu.spring;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class UserController {
+
+    @Autowired // 注意：此处使用了自动装配的注解
+    private UserMapper userMapper;
+
+    public void reg() {
+        System.out.println("UserController.reg() >> 控制器即将执行用户注册……");
+        userMapper.insert();
+    }
+
+}
+```
+
+**SpringRunner.java**
+
+```java
+package cn.tedu.spring;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class SpringRunner {
+
+    public static void main(String[] args) {
+        // 1. 加载Spring
+        AnnotationConfigApplicationContext ac
+                = new AnnotationConfigApplicationContext(SpringConfig.class);
+
+        // 2. 从Spring中获取对象
+        UserController userController
+                = ac.getBean("userController", UserController.class);
+
+        // 3. 测试使用对象，以便于观察是否获取到了有效的对象
+        userController.reg();
+
+        // 4. 关闭
+        ac.close();
+    }
+}
+```
+
+
 
 
 
