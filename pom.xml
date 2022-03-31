@@ -7,6 +7,9 @@
     <groupId>cn.tedu</groupId>
     <artifactId>framework-cgb2112</artifactId>
     <version>1.0.0</version>
+    <modules>
+        <module>spring01</module>
+    </modules>
 
     <packaging>pom</packaging>
 
