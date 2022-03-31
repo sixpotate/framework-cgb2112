@@ -143,9 +143,20 @@ public class SpringRunner {
 
 接下来，运行`SpringRunner`类的`main()`方法即可看到执行效果。
 
-​		
+关于以上代码：
 
-
+- 在`AnnotationConfigApplicationContext`的构造方法中，应该将`SpringBeanFactory.class`作为参数传入，否则就不会加载`SpringBeanFactory`类中内容
+  - 其实，在以上案例中，`SpringBeanFactory`类上的`@Configuration`注解并不是必须的
+- 在`getBean()`时，传入的字符串参数`"random"`是`SpringBeanFactory`类中的方法的名称
+- 在`SpringBeanFactory`类中的方法必须添加`@Bean`注解，其作用是使得Spring框架自动调用此方法，并管理此方法返回的结果
+- 关于`getBean()`方法，此方法被重载了多次，典型的有：
+  - `Object getBean(String beanName)`
+    - 通过此方法，传入的`beanName`必须是有效的，否则将导致`NoSuchBeanDefinitionException`
+  - `T getBean(Class<T> beanClass)`;
+    - 使用此方法时，传入的类型在Spring中必须**有且仅有1个对象**，如果没有匹配类型的对象，将导致`NoSuchBeanDefinitionException`，如果有2个，将导致`NoUniqueBeanDefinitionException`
+  - `T getBean(String beanName, Class<T> beanClass)`
+    - 此方法仍是根据传入的`beanName`获取对象，并且根据传入的`beanClass`进行类型转换
+- 使用的`@Bean`注解可以传入`String`类型的参数，如果传入，则此注解对应的方法的返回结果的`beanName`就是`@Bean`注解中传入的`String`参数值
 
 
 
