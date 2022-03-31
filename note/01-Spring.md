@@ -87,7 +87,9 @@ public class UserController {
 
 然后，点击IDEA中悬浮的刷新Maven的图标，或展开右侧的Maven面板点击刷新按钮，即可自动下载所需要的jar包文件（这些文件会被下载到本机的Maven仓库中，同一个依赖项的同一个版本只会下载一次）。
 
-## 3. 通过Spring创建对象
+## 3. 通过Spring创建对象--通过@Bean方法
+
+**演示案例：spring01**
 
 操作步骤：
 
@@ -158,11 +160,34 @@ public class SpringRunner {
     - 此方法仍是根据传入的`beanName`获取对象，并且根据传入的`beanClass`进行类型转换
 - 使用的`@Bean`注解可以传入`String`类型的参数，如果传入，则此注解对应的方法的返回结果的`beanName`就是`@Bean`注解中传入的`String`参数值
 
+## 4. 通过Spring创建对象--
 
+**演示案例：spring02**
 
+先使用同样的步骤创建`spring02`工程。
 
+操作步骤：
 
+- 在`pom.xml`中添加`spring-context`的依赖项
 
+- 自行创建某个类，例如创建`cn.tedu.spring.UserMapper`类，并在类的声明之前添加`@Component`注解
+
+- 与前次案例相似，创建可执行的类，与前次案例的区别在于：
+
+  - 在`AnnotationConfigApplicationContext`的构造方法中传入的是`UserMapper`类的包名，即：
+
+    ```java
+    AnnotationConfigApplicationContext ac
+        	= new AnnotationConfigApplicationContext("cn.tedu.spring");
+    ```
+
+  - 调用`getBean()`时，传入的名称是将`UserMapper`类的名称的首字母改为小写，即：
+
+    ```java
+    UserMapper userMapper = ac.getBean("userMapper", UserMapper.class);
+    ```
+
+    
 
 
 
