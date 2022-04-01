@@ -45,7 +45,102 @@ MVC为项目中代码的职责划分提供了参考。
   </dependency>
   ```
 
+- 接下来，准备2个配置类，一个是Spring框架的配置类，一个是Spring MVC框架的配置类：
+
+  **cn.tedu.springmvc.config.SpringConfig.java**
+
+  ```java
+  package cn.tedu.springmvc.config;
   
+  import org.springframework.context.annotation.Configuration;
+  
+  @Configuration // 此注解不是必须的
+  public class SpringConfig {
+  }
+  ```
+
+  **cn.tedu.springmvc.config.SpringMvcConfig.java**
+
+  ```java
+  package cn.tedu.springmvc.config;
+  
+  import org.springframework.context.annotation.ComponentScan;
+  import org.springframework.context.annotation.Configuration;
+  import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+  
+  @Configuration // 此注解不是必须的
+  @ComponentScan("cn.tedu.springmvc") // 必须配置在当前配置类，不可配置在Spring的配置类
+  public class SpringMvcConfig implements WebMvcConfigurer {
+  }
+  ```
+
+- 接下来，需要创建项目的初始化类，此类必须继承自`AbstractAnnotationConfigDispatcherServletInitializer`，并在此类中重写父类的3个抽象方法，返回正确的值（各方法的意义请参见以下代码中的注释）：
+
+  **cn.tedu.springmvc.SpringMvcInitializer**
+
+  ```java
+  package cn.tedu.springmvc;
+  
+  import cn.tedu.springmvc.config.SpringConfig;
+  import cn.tedu.springmvc.config.SpringMvcConfig;
+  import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+  
+  /**
+   * Spring MVC项目的初始化类
+   */
+  public class SpringMvcInitializer extends
+          AbstractAnnotationConfigDispatcherServletInitializer {
+  
+      @Override
+      protected Class<?>[] getRootConfigClasses() {
+          // 返回自行配置的Spring相关内容的类
+          return new Class[] { SpringConfig.class };
+      }
+  
+      @Override
+      protected Class<?>[] getServletConfigClasses() {
+          // 返回自行配置的Spring MVC相关内容的类
+          return new Class[] { SpringMvcConfig.class };
+      }
+  
+      @Override
+      protected String[] getServletMappings() {
+          // 返回哪些路径是由Spring MVC框架处理的
+          return new String[] { "*.do" };
+      }
+  
+  }
+  ```
+
+- 最后，创建控制器类，用于接收客户端的某个请求，并简单的响应结果：
+
+  **cn.tedu.springmvc.controller.UserController**
+
+  ```java
+  package cn.tedu.springmvc.controller;
+  
+  import org.springframework.stereotype.Controller;
+  import org.springframework.web.bind.annotation.RequestMapping;
+  import org.springframework.web.bind.annotation.ResponseBody;
+  
+  @Controller // 必须是@Controller，不可以是其它组件注解
+  public class UserController {
+  
+      public UserController() {
+          System.out.println("UserController.UserController()");
+      }
+  
+      // http://localhost:8080/springmvc01_war_exploded/login.do
+      @RequestMapping("/login.do")
+      @ResponseBody
+      public String login() {
+          return "UserController.login()";
+      }
+  
+  }
+  ```
+
+- 全部完成后，启动项目，会自动打开浏览器并显示主页，在主页的地址栏URL上补充`/login.do`即可实现访问，并看到结果。
 
 
 
