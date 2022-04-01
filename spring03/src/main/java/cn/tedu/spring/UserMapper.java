@@ -2,7 +2,7 @@ package cn.tedu.spring;
 
 import org.springframework.stereotype.Repository;
 
-@Repository
+//@Repository
 public class UserMapper {
 
     public void insert() {

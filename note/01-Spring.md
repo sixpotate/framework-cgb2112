@@ -393,7 +393,14 @@ public class SpringRunner {
 }
 ```
 
+关于`@Autowired`的装配机制：
 
+首先，会根据需要装配的数据的类型在Spring容器中查找匹配的Bean的数量，当数量为：
+
+- 0个：判断`@Autowired`注解的`required`属性的值
+  - 当`required=true`时：启动项目时即报告异常
+  - 当`required=false`时：放弃自动装配，不会报告异常
+- 1个：直接装配，且装配成功
 
 
 
