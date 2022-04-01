@@ -12,6 +12,7 @@
         <module>spring02</module>
         <module>spring03</module>
         <module>spring04</module>
+        <module>springmvc01</module>
     </modules>
 
     <packaging>pom</packaging>

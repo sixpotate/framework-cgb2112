@@ -651,7 +651,7 @@ public class SpringRunner {
   - 读取配置的数据时，可以：
     - 使用`@Value`注解将值注入到属性中
     - 自动装配`Environment`对象，并调用此对象的`getProperty()`方法以获取配置值
-- 了解Spring的IoC（Inverion of Controll：控制反转）和DI（Dependency Injection：依赖注入）
+- 了解Spring的IoC（Inversion of Controll：控制反转）和DI（Dependency Injection：依赖注入）
   - Spring框架基于DI实现了IoC，DI是一种实现手段，IoC是最终实现的目标/效果
 - Spring AOP后续再讲
 
