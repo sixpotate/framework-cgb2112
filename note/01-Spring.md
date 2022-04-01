@@ -419,16 +419,150 @@ public class SpringRunner {
 - 在`src/main/resources`文件夹下创建`jdbc.properties`，内容为：
 
   ```
-  url=jdbc:mysql://localhost:3306/tedu
-  driver=com.mysql.jdbc.Driver
-  username=root
-  password=1234
+  spring.jdbc.url=jdbc:mysql://localhost:3306/tedu
+  spring.jdbc.driver=com.mysql.jdbc.Driver
+  spring.jdbc.username=root
+  spring.jdbc.password=1234
+  spring.jdbc.init-size=5
+  spring.jdbc.max-active=20
   ```
 
-- 在`src/main/java`下创建Java类，用于读取以上配置文件中的信息，则创建`cn.tedu.spring.JdbcConfig`类：
+  **注意：自定义的属性名称建议添加一些前缀，避免与系统属性和Java属性冲突。**
+
+- 在`src/main/java`下创建Java类，使用`@PropertySource`注解读取以上配置文件中的信息，则创建`cn.tedu.spring.SpringConfig`类：
 
   ```java
+  package cn.tedu.spring;
   
+  import org.springframework.context.annotation.ComponentScan;
+  import org.springframework.context.annotation.Configuration;
+  import org.springframework.context.annotation.PropertySource;
+  
+  @Configuration
+  @ComponentScan("cn.tedu.spring")
+  @PropertySource("classpath:jdbc.properties")
+  public class SpringConfig {
+  }
+  ```
+
+  提示：当Spring框架读取了配置文件中的信息后，会将这些读取到的数据封装在内置的`Environment`对象中，后续，任何需要这些配置信息的组件都可以从`Environment`中读取到配置的数据。
+
+- 接下来，可以创建某个Java类，从`Environment`中读取配置的数据，例如创建`JdbcConfig`类：
+
+  ```java
+  package cn.tedu.spring;
+  
+  import org.springframework.beans.factory.annotation.Value;
+  import org.springframework.stereotype.Component;
+  
+  @Component
+  public class JdbcConfig {
+  
+      @Value("${spring.jdbc.url}")
+      private String url;
+      @Value("${spring.jdbc.driver}")
+      private String driver;
+      @Value("${spring.jdbc.username}")
+      private String username;
+      @Value("${spring.jdbc.password}")
+      private String password;
+      @Value("${spring.jdbc.init-size}")
+      private int initSize;
+      @Value("${spring.jdbc.max-active}")
+      private int maxActive;
+  
+      public String getUrl() {
+          return url;
+      }
+  
+      public void setUrl(String url) {
+          this.url = url;
+      }
+  
+      public String getDriver() {
+          return driver;
+      }
+  
+      public void setDriver(String driver) {
+          this.driver = driver;
+      }
+  
+      public String getUsername() {
+          return username;
+      }
+  
+      public void setUsername(String username) {
+          this.username = username;
+      }
+  
+      public String getPassword() {
+          return password;
+      }
+  
+      public void setPassword(String password) {
+          this.password = password;
+      }
+  
+      public int getInitSize() {
+          return initSize;
+      }
+  
+      public void setInitSize(int initSize) {
+          this.initSize = initSize;
+      }
+  
+      public int getMaxActive() {
+          return maxActive;
+      }
+  
+      public void setMaxActive(int maxActive) {
+          this.maxActive = maxActive;
+      }
+  }
+  ```
+
+  提示：前序的操作中，在`SpringConfig`中已经配置了组件扫描，这个`JdbcConfig`类必须在组件扫描的范围内，并添加组件注解，这样Spring框架才会创建`JdbcConfig`类的对象，进而根据各`@Value`注解将`Environment`中的配置数据注入到属性中
+
+- 最后，可以执行本案例：
+
+  ```java
+  package cn.tedu.spring;
+  
+  import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+  
+  public class SpringRunner {
+  
+      public static void main(String[] args) {
+          // 1. 加载Spring
+          System.out.println("1. 加载Spring，开始……");
+          AnnotationConfigApplicationContext ac
+                  = new AnnotationConfigApplicationContext(SpringConfig.class);
+          System.out.println("1. 加载Spring，完成！");
+          System.out.println();
+  
+          // 2. 从Spring中获取对象
+          System.out.println("2. 从Spring中获取对象，开始……");
+          JdbcConfig jdbcConfig = ac.getBean("jdbcConfig", JdbcConfig.class);
+          System.out.println("2. 从Spring中获取对象，完成！");
+          System.out.println();
+  
+          // 3. 测试使用对象，以便于观察是否获取到了有效的对象
+          System.out.println("3. 测试使用对象，开始……");
+          System.out.println("\turl >> " + jdbcConfig.getUrl());
+          System.out.println("\tdriver >> " + jdbcConfig.getDriver());
+          System.out.println("\tusername >> " + jdbcConfig.getUsername());
+          System.out.println("\tpassword >> " + jdbcConfig.getPassword());
+          System.out.println("\tinit-size >> " + jdbcConfig.getInitSize());
+          System.out.println("\tmax-active >> " + jdbcConfig.getMaxActive());
+          System.out.println("3. 测试使用对象，完成！");
+          System.out.println();
+  
+          // 4. 关闭
+          System.out.println("4. 关闭，开始……");
+          ac.close();
+          System.out.println("4. 关闭，完成！");
+      }
+  }
   ```
 
   
