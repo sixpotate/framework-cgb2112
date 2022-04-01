@@ -20,7 +20,32 @@ MVC为项目中代码的职责划分提供了参考。
 
 ## 3. 使用Spring MVC工程接收客户端的请求
 
+**【操作步骤】**
 
+- 在`pom.xml`中添加`spring-webmvc`依赖项：
+
+  ```xml
+  <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+  <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>5.3.14</version>
+  </dependency>
+  ```
+
+  提示：如果后续运行时提示不可识别Servlet相关类，则补充添加以下依赖项：
+
+  ```xml
+  <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+  <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+      <scope>provided</scope>
+  </dependency>
+  ```
+
+  
 
 
 
