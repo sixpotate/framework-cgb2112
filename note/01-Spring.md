@@ -565,7 +565,95 @@ public class SpringRunner {
   }
   ```
 
-  
+另外，还可以直接装配一个`Environment`对象，并在需要的时候通过`Environment`对象读取配置的数据，例如：
+
+```java
+package cn.tedu.spring;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
+
+@Component
+public class EnvironmentData {
+
+    @Autowired
+    private Environment environment;
+
+    public Environment getEnvironment() {
+        return environment;
+    }
+
+}
+```
+
+```java
+package cn.tedu.spring;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.env.Environment;
+
+public class SpringRunner {
+
+    public static void main(String[] args) {
+        // 1. 加载Spring
+        System.out.println("1. 加载Spring，开始……");
+        AnnotationConfigApplicationContext ac
+                = new AnnotationConfigApplicationContext(SpringConfig.class);
+        System.out.println("1. 加载Spring，完成！");
+        System.out.println();
+
+        // 2. 从Spring中获取对象
+        System.out.println("2. 从Spring中获取对象，开始……");
+        EnvironmentData environmentData
+                = ac.getBean("environmentData", EnvironmentData.class);
+        System.out.println("2. 从Spring中获取对象，完成！");
+        System.out.println();
+
+        // 3. 测试使用对象，以便于观察是否获取到了有效的对象
+        System.out.println("3. 测试使用对象，开始……");
+        System.out.println("---------------------------------------");
+        System.out.println("通过自动装配Environment对象获取的值：");
+        Environment env = environmentData.getEnvironment();
+        System.out.println("\tEnvironment >> " + env);
+        System.out.println("\turl >> " + env.getProperty("spring.jdbc.url"));
+        System.out.println("\tdriver >> " + env.getProperty("spring.jdbc.driver"));
+        System.out.println("\tusername >> " + env.getProperty("spring.jdbc.username"));
+        System.out.println("\tpassword >> " + env.getProperty("spring.jdbc.password"));
+        System.out.println("\tinit-size >> " + env.getProperty("spring.jdbc.init-size"));
+        System.out.println("\tmax-active >> " + env.getProperty("spring.jdbc.max-active"));
+        System.out.println("3. 测试使用对象，完成！");
+        System.out.println();
+
+        // 4. 关闭
+        System.out.println("4. 关闭，开始……");
+        ac.close();
+        System.out.println("4. 关闭，完成！");
+    }
+}
+```
+
+## 10. 关于Spring框架的小结
+
+关于Spring框架，你应该：
+
+- 了解Spring框架的作用：创建对象，管理对象
+- 掌握通过Spring创建对象的2种方式：
+  - 在配置类（带`@Configuration`注解的类）中使用`@Bean`方法
+  - 使用组件扫描，并在类上添加组件注解
+    - 组件注解有：`@Component`、`@Controller`、`@Service`、`@Repository`
+  - 如果是自定义的类，应该使用组件扫描+组件注解的方式，如果不是自定义的类，必须使用配置类中的`@Bean`方法
+- 了解Spring Bean的作用域与生命周期
+- 掌握`@Autowired`自动装配，理解其装配机制
+  - 建议背下来：`@Autowired`与`@Resource`的区别
+- 掌握读取`.properties`配置文件中的数据
+  - 先使用`@PropertySource`注解指定需要读取的文件
+  - 读取配置的数据时，可以：
+    - 使用`@Value`注解将值注入到属性中
+    - 自动装配`Environment`对象，并调用此对象的`getProperty()`方法以获取配置值
+- 了解Spring的IoC（Inverion of Controll：控制反转）和DI（Dependency Injection：依赖注入）
+  - Spring框架基于DI实现了IoC，DI是一种实现手段，IoC是最终实现的目标/效果
+- Spring AOP后续再讲
 
 
 

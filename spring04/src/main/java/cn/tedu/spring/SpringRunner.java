@@ -34,6 +34,7 @@ public class SpringRunner {
         System.out.println("---------------------------------------");
         System.out.println("通过自动装配Environment对象获取的值：");
         Environment env = environmentData.getEnvironment();
+        System.out.println("\tEnvironment >> " + env);
         System.out.println("\turl >> " + env.getProperty("spring.jdbc.url"));
         System.out.println("\tdriver >> " + env.getProperty("spring.jdbc.driver"));
         System.out.println("\tusername >> " + env.getProperty("spring.jdbc.username"));
