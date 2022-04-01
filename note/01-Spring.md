@@ -395,14 +395,18 @@ public class SpringRunner {
 
 关于`@Autowired`的装配机制：
 
-首先，会根据需要装配的数据的类型在Spring容器中查找匹配的Bean的数量，当数量为：
+首先，会根据需要装配的数据的类型在Spring容器中查找匹配的Bean（对象）的数量，当数量为：
 
 - 0个：判断`@Autowired`注解的`required`属性的值
-  - 当`required=true`时：启动项目时即报告异常
+  - 当`required=true`时：装配失败，启动项目时即报告异常
   - 当`required=false`时：放弃自动装配，不会报告异常
+    - 后续当使用到此属性时，会出现`NullPointerException`
 - 1个：直接装配，且装配成功
+- 多个：自动尝试按照名称实现装配（属性的名称与Spring Bean的名称）
+  - 存在与属性名称匹配的Spring Bean：装配成功
+  - 不存在与属性名称匹配的Spring Bean：装配失败，启动项目时即报告异常
 
-
+另外，使用`@Resource`注解也可以实现自动装配（此注解是`javax`包中的），其装配机制是先尝试根据名称来装配，如果失败，再尝试根据类型装配！
 
 
 
