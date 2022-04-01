@@ -408,13 +408,30 @@ public class SpringRunner {
 
 另外，使用`@Resource`注解也可以实现自动装配（此注解是`javax`包中的），其装配机制是先尝试根据名称来装配，如果失败，再尝试根据类型装配！
 
+除了对属性装配以外，Spring的自动装配机制还可以表现出：如果**某个方法是由Spring框架自动调用的**（通常是构造方法，或`@Bean`方法，其它的方法中，如果参数有限制则专门说明），当这个方法被声明了参数时，Spring框架也会自动的尝试从容器找到匹配的对象，用于调用此方法！
 
+## 9. 读取properties配置文件中的信息
 
+操作步骤：
 
+- 创建新的工程`spring04`，创建步骤参考前序案例
 
+- 在`src/main/resources`文件夹下创建`jdbc.properties`，内容为：
 
+  ```
+  url=jdbc:mysql://localhost:3306/tedu
+  driver=com.mysql.jdbc.Driver
+  username=root
+  password=1234
+  ```
 
+- 在`src/main/java`下创建Java类，用于读取以上配置文件中的信息，则创建`cn.tedu.spring.JdbcConfig`类：
 
+  ```java
+  
+  ```
+
+  
 
 
 

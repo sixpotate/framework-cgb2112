@@ -11,6 +11,7 @@
         <module>spring01</module>
         <module>spring02</module>
         <module>spring03</module>
+        <module>spring04</module>
     </modules>
 
     <packaging>pom</packaging>
