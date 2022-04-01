@@ -22,6 +22,10 @@ public class SpringRunner {
         System.out.println("3. 测试使用对象，开始……");
         System.out.println("\turl >> " + jdbcConfig.getUrl());
         System.out.println("\tdriver >> " + jdbcConfig.getDriver());
+        System.out.println("\tusername >> " + jdbcConfig.getUsername());
+        System.out.println("\tpassword >> " + jdbcConfig.getPassword());
+        System.out.println("\tinit-size >> " + jdbcConfig.getInitSize());
+        System.out.println("\tmax-active >> " + jdbcConfig.getMaxActive());
         System.out.println("3. 测试使用对象，完成！");
         System.out.println();
 
