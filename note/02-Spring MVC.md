@@ -352,7 +352,57 @@ public String reg(UserRegDTO userRegDTO) {
 
 另外，你也可以将多个请求参数区分开来，一部分直接声明为处理请求的方法的参数，另一部分封装起来。
 
-## 7. 
+## 7. 关于RESTful
+
+百科资料：RESTFUL是一种网络应用程序的设计风格和开发方式，基于HTTP，可以使用XML格式定义或JSON格式定义。RESTFUL适用于移动互联网厂商作为业务接口的场景，实现第三方OTT调用移动网络资源的功能，动作类型为新增、变更、删除所调用资源。
+
+RESTful的设计风格的**典型表现**就是：将某些唯一的请求参数的值放在URL中，使之成为URL的一部分，例如https://www.zhihu.com/question/28557115这个URL的最后一部分`28557115` 应该就是这篇贴子的id值，而不是使用例如`?id=28557115`这样的方式放在URL参数中。
+
+注意：RESTful只是一种设计风格，并不是一种规定，也没有明确的或统一的执行方式！
+
+如果没有明确的要求，以处理用户数据为例，可以将URL设计为：
+
+- `/users`：查看用户列表
+- `/users/9527`：查询id=9527的用户的数据
+- `/users/9527/delete`：删除id=9527的用户的数据
+
+在RESTful风格的URL中，大多是包含了某些请求参数的值，在使用Spring MVC框架时，当需要设计这类URL时，可以使用`{名称}`进行占位，并在处理请求的方法的参数列表中，使用`@PathVariable`注解请求参数，即可将占位符的实际值注入到请求参数中！
+
+例如：
+
+```java
+// http://localhost:8080/springmvc01_war_exploded/user/3/info.do
+@GetMapping("/{id}/info.do")
+public UserVO info(@PathVariable Long id) {
+    System.out.println("即将查询 id = " + id + " 的用户的信息……");
+    UserVO userVO = new UserVO();
+    userVO.setUsername("chengheng");
+    userVO.setPassword("1234567890");
+    userVO.setEmail("chengheng@qq.com");
+    return userVO;
+}
+```
+
+
+
+
+
+
+
+```java
+@GetMapping("/users/{id}")
+public xx xx() {
+    xx
+}
+```
+
+
+
+
+
+
+
+
 
 
 

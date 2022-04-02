@@ -26,9 +26,10 @@ public class UserController {
         return "OK";
     }
 
-    // http://localhost:8080/springmvc01_war_exploded/user/info.do
-    @GetMapping("/info.do")
-    public UserVO info() {
+    // http://localhost:8080/springmvc01_war_exploded/user/3/info.do
+    @GetMapping("/{id}/info.do")
+    public UserVO info(@PathVariable Long id) {
+        System.out.println("即将查询 id = " + id + " 的用户的信息……");
         UserVO userVO = new UserVO();
         userVO.setUsername("chengheng");
         userVO.setPassword("1234567890");
