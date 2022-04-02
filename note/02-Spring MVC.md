@@ -348,11 +348,27 @@ public String reg(UserRegDTO userRegDTO) {
 }
 ```
 
+需要注意，不要将`@RequestParam`添加在封装的类型之前。
+
+另外，你也可以将多个请求参数区分开来，一部分直接声明为处理请求的方法的参数，另一部分封装起来。
+
+## 7. 
 
 
 
 
 
+
+
+## 附：关于POJO
+
+所有用于封装属性的类型都可以统称为POJO。
+
+常见的POJO后缀有：BO、DO、VO、DTO等，不同的后缀表示不同的意义，例如：VO = Value Object / View Object，DTO = Data Transfer Object ……
+
+在一个项目中，哪些情景下使用哪种后缀并没有统一的规定，通常是各项目内部决定。
+
+注意：在为封装属性的类进行命名时，以上BO、DO、VO、DTO等这些后缀的每一个字母都应该是大写的！
 
 
 
