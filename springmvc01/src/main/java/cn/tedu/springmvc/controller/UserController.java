@@ -27,7 +27,7 @@ public class UserController {
     }
 
     // http://localhost:8080/springmvc01_war_exploded/user/3/info.do
-    @GetMapping("/{id}/info.do")
+    @GetMapping("/{id:[0-9]+}/info.do")
     public UserVO info(@PathVariable Long id) {
         System.out.println("即将查询 id = " + id + " 的用户的信息……");
         UserVO userVO = new UserVO();
@@ -35,6 +35,24 @@ public class UserController {
         userVO.setPassword("1234567890");
         userVO.setEmail("chengheng@qq.com");
         return userVO;
+    }
+
+    // http://localhost:8080/springmvc01_war_exploded/user/liucs/info.do
+    @GetMapping("/{username:[a-zA-Z]+}/info.do")
+    public UserVO info(@PathVariable String username) {
+        System.out.println("即将查询 用户名 = " + username + " 的用户的信息……");
+        UserVO userVO = new UserVO();
+        userVO.setUsername("chengheng");
+        userVO.setPassword("1234567890");
+        userVO.setEmail("chengheng@qq.com");
+        return userVO;
+    }
+
+    // http://localhost:8080/springmvc01_war_exploded/user/list/info.do
+    @GetMapping("/list/info.do")
+    public UserVO list() {
+        System.out.println("即将查询 用户的列表 的信息……");
+        return null;
     }
 
 }

@@ -383,18 +383,76 @@ public UserVO info(@PathVariable Long id) {
 }
 ```
 
-
-
-
-
-
+提示：在以上代码中，URL中使用的占位符是`{id}`，则方法的参数名称也应该是`id`，就可以直接匹配上！如果无法保证这2处的名称一致，则需要在`@PathVariable`注解中配置占位符中的名称，例如：
 
 ```java
-@GetMapping("/users/{id}")
-public xx xx() {
-    xx
+@GetMapping("/{userId}/info.do")
+public UserVO info(@PathVariable("userId") Long id) {
+    // ...
 }
 ```
+
+在使用`{}`格式的占位符时，还可以结合正则表达式进行匹配，其基本语法是：
+
+```java
+{占位符名称:正则表达式}
+```
+
+例如：
+
+```java
+@GetMapping("/{id:[0-9]+}/info.do")
+```
+
+当设计成以上URL时，仅当占位符位置的是纯数字的URL才会被匹配上，如果不是纯数字的刚出现404错误页面。
+
+并且，以上模式的多种不冲突的正则表达式是可以同时存在的，例如：
+
+```java
+@GetMapping("/{id:[0-9]+}/info.do")
+public UserVO info(@PathVariable Long id) {
+    System.out.println("即将查询 id = " + id + " 的用户的信息……");
+    // ...
+}
+
+@GetMapping("/{username:[a-zA-Z]+}/info.do")
+public UserVO info(@PathVariable String username) {
+    System.out.println("即将查询 用户名 = " + username + " 的用户的信息……");
+    // ...
+}
+```
+
+甚至，还可以存在不使用正则表达式，但是URL格式几乎一样的配置：
+
+```java
+@GetMapping("/{id:[0-9]+}/info.do")
+public UserVO info(@PathVariable Long id) {
+    System.out.println("即将查询 id = " + id + " 的用户的信息……");
+    // ...
+}
+
+@GetMapping("/{username:[a-zA-Z]+}/info.do")
+public UserVO info(@PathVariable String username) {
+    System.out.println("即将查询 用户名 = " + username + " 的用户的信息……");
+    // ...
+}
+
+// 【以下是新增的】
+// http://localhost:8080/springmvc01_war_exploded/user/list/info.do
+@GetMapping("/list/info.do")
+public UserVO list() {
+    System.out.println("即将查询 用户的列表 的信息……");
+    // ...
+}
+```
+
+最终执行时，如果使用`/user/list/info.do`，则会匹配到以上代码中的最后一个方法，并不会因为这个URL还能匹配第2个方法配置的`{username:[a-zA-Z]+}`而产生冲突。所以，使用了占位符的做法并不影响精准匹配的路径。
+
+
+
+
+
+
 
 
 
