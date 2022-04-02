@@ -278,7 +278,75 @@ public UserVO info() {
 }
 ```
 
+**SpringMvcConfig**（补充`@EnableWebMvc`注解）
 
+```java
+@Configuration // 此注解不是必须的
+@EnableWebMvc
+@ComponentScan("cn.tedu.springmvc") // 必须配置在当前配置类，不可配置在Spring的配置类
+public class SpringMvcConfig implements WebMvcConfigurer {
+}
+```
+
+## 6. 接收请求参数
+
+在Spring MVC中，当需要接收客户端的请求参数时，只需要将各参数直接声明为处理请求的方法的参数即可，例如：
+
+```java
+// http://localhost:8080/springmvc01_war_exploded/user/reg.do?username=root&password=123456&age=25
+@RequestMapping("/reg.do")
+public String reg(String username, String password, Integer age) {
+    System.out.println("username = " + username
+            + ", password = " + password
+            + ", age = " + age);
+    return "OK";
+}
+```
+
+需要注意：
+
+- 如果客户端提交的请求中根本没有匹配名称的参数，则以上获取到的值将是`null`
+- 如果客户端仅提交了参数名称，却没有值，则以上获取到的值将是`""`（长度为0的字符串）
+- 如果客户端提交了匹配名称的参数，并且值是有效的，则可以获取到值
+- 以上名称应该是由服务器端决定的，客户端需要根据以上名称来提交请求参数
+- 声明参数时，可以按需将参数声明成期望的类型，例如以上将`age`声明为`Integer`类型
+  - 注意：声明成`String`以外的类型时，应该考虑是否可以成功转换类型
+
+当有必要的情况下，可以在以上各参数的声明之前添加`@RequestParam`注解，其作用主要有：
+
+- 配置`name`属性：客户端将按照此配置的值提交请求参数，而不再是根据方法的参数名称来提交请求参数
+- 配置`required`属性：是否要求客户端必须提交此请求参数，默认为`true`，如果不提交，则出现400错误，当设置为`false`时，如果不提交，则服务器端将此参数值视为`null`
+- 配置`defaultValue`属性：配置此请求参数的默认值，当客户端没有提交此请求参数时，视为此值
+
+另外，如果需要客户端提交的请求参数较多，可以将这些参数封装为自定义的数据类型，并将自定义的数据类型作为处理方法的参数即可，例如：
+
+**cn.tedu.springmvc.dto.UserRegDTO**
+
+```java
+package cn.tedu.springmvc.dto;
+
+public class UserRegDTO {
+
+    private String username;
+    private String password;
+    private Integer age;
+
+    // 生成Setters & Getters
+    // 生成toString()
+    
+}
+```
+
+**UserController**（代码片段）
+
+```java
+// http://localhost:8080/springmvc01_war_exploded/user/reg.do?username=root&password=123456&age=25
+@RequestMapping("/reg.do")
+public String reg(UserRegDTO userRegDTO) {
+    System.out.println(userRegDTO);
+    return "OK";
+}
+```
 
 
 
