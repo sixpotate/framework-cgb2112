@@ -1,21 +1,22 @@
 package cn.tedu.springmvc.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller // 必须是@Controller，不可以是其它组件注解
+@RestController
+@RequestMapping("/user")
 public class UserController {
 
     public UserController() {
         System.out.println("UserController.UserController()");
     }
 
-    // http://localhost:8080/springmvc01_war_exploded/login.do
-    @RequestMapping("/login.do")
-    @ResponseBody
+    // http://localhost:8080/springmvc01_war_exploded/user/login.do
+    @RequestMapping(value = "/login.do",
+            method = {RequestMethod.POST, RequestMethod.GET})
     public String login() {
-        return "UserController.login()";
+        return "OK";
     }
 
 }

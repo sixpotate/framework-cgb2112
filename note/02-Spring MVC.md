@@ -142,9 +142,91 @@ MVC为项目中代码的职责划分提供了参考。
 
 - 全部完成后，启动项目，会自动打开浏览器并显示主页，在主页的地址栏URL上补充`/login.do`即可实现访问，并看到结果。
 
+关于以上案例：
 
+- 当启动Tomcat时，会自动将项目打包并部署到Tomcat，通过自动打开的浏览器中的URL即可访问主页，在URL中有很长一段是例如 `springmvc01_war_explored` 这一段是不可以删除的，其它的各路径必须补充在其之后，例如 `/login.do` 就必须在此之后
+- 当启动Tomcat时，项目一旦部署成功，就会自动创建并加载`AbstractAnnotationConfigDispatcherServletInitializer`的子类，即当前项目中自定义的`SpringMvcInitialier`，无论这个类放在哪个包中，都会自动创建并加载，由于会自动调用这个类中所有方法，所以会将Spring MVC框架处理的请求路径设置为 `*.do`，并执行对 `cn.tedu.springmvc` 的组件扫描，进而会创建 `UserController` 的对象，由于在 `UserController` 中配置的方法使用了 `@RequestMapping("/login.do")`，则此时还将此方法与`/login.do`进行了绑定，以至于后续随时访问`/login.do`时都会执行此方法
+- 注意：组件扫描必须配置在Spring MVC的配置类中
+- 注意：控制器类上的注解必须是`@Controller`，不可以是`@Component`、`@Service`、`@Repository`
 
+## 4. 关于`@RequestMapping`注解
 
+`@RequestMapping`注解的**主要作用**是配置**请求路径**与**处理请求的方法**的映射关系，例如将此注解添加在控制器中某个方法之前：
+
+```java
+// http://localhost:8080/springmvc01_war_exploded/login.do
+@RequestMapping("/login.do")
+@ResponseBody
+public String login() {
+    return "UserController.login()";
+}
+```
+
+就会将注解中配置的路径与注解所在的方法对应上！
+
+除了方法之前，此注解还可以添加在控制器类之前，例如：
+
+```java
+@Controller
+@RequestMapping("/user")
+public class UserController {
+}
+```
+
+一旦在类上添加了此注解并配置路径，则每个方法实际映射到的请求路径都是“类上的`@RequestMapping`配置的路径 + 方法上的`@RequestMapping`配置的路径”。
+
+通常，在项目中，推荐为每一个控制器类都配置此注解，以指定某个URL前缀。
+
+在使用`@RequestMapping`配置路径时，并不要求各路径使用 `/` 作为第1个字符！
+
+另外，在`@RequestMapping`还可以配置：
+
+- 请求方式
+- 请求头
+- 响应头
+- 等等
+
+所以，在`@RequestMapping`注解中，增加配置`method`属性，可以限制客户端的请求方式，例如可以配置为：
+
+```java
+@RequestMapping(value = "/login.do", method = RequestMethod.POST)
+@ResponseBody
+public String login() {
+    return "UserController.login()";
+}
+```
+
+如果按照以上代码，则`/login.do`路径只能通过`POST`方式发起请求才可以被正确的处理，如果使用其它请求方式（例如`GET`），则会导致HTTP的405错误。
+
+如果没有配置`method`属性，则表示可以使用任何请求方式，包括：
+
+```
+GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
+```
+
+另外，Spring MVC框架还提供了`@RequestMapping`的相关注解，例如：
+
+- `@GetMapping`
+- `@PostMapping`
+- `@PutMapping`
+- `@DeleteMapping`
+- 等等
+
+这些注解就是已经限制了请求方式的注解！以`@GetMapping`为例，就限制了请求方式必须是`GET`，除此以外，使用方式与`@RequestMapping`完全相同！
+
+所以，在实际应用中，在类的上方肯定使用`@RequestMapping`（其它的`@XxxMapping`不可以加在类上），方法上一般都使用`@GetMapping`、`@PostMapping`等注解，除非在极特殊的情况下，某些请求同时允许多种请求方式，才会在方法上使用`@RequestMapping`。
+
+# 5. 关于`@ResponseBody`注解
+
+`@ResponseBody`注解表示：响应正文。
+
+一旦配置为“响应正文”，则处理请求的方法的返回值就会直接响应到客户端去！
+
+如果没有配置为“响应正文”，则处理请求的方法的返回值表示“视图组件的名称”，当方法返回后，服务器端并不会直接响应，而是根据“视图组件的名称”在服务器端找到对应的视图组件，并处理，最后，将处理后的视图响应到客户端去，这不是**前后端分离**的做法！
+
+可以在需要正文的方法上添加`@ResponseBody`注解，由于开发模式一般相对统一，所以，一般会将`@ResponseBody`添加在控制器类上，表示此控制器类中所有处理请求的方法都将响应正文！
+
+在Spring MVC框架中，还提供了`@RestController`注解，它同时具有`@Controller`和`@ResponseBody`注解的效果，所以，在响应正文的控制器上，只需要使用`@RestController`即可，不必再添加`@Controller`和`@ResponseBody`注解。
 
 
 
