@@ -243,17 +243,46 @@ GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
 </dependency>
 ```
 
+以上`jackson-databind`依赖项中也有一个转换器，当Spring MVC调用的处理请求的方法的返回值是Spring MVC没有匹配的默认转换器时，会自动使用`jackson-databind`的转换器，而`jackson-databind`转换器就会解析方法的返回值，并将其处理为JSON格式的字符串，在响应头中将`Content-Type`设置为`application/json`。
 
+注意：在Spring MVC项目中，还需要在Spring MVC的配置类（`SpringMvcConfig`）上添加`@EnableWebMvc`注解，否则响应时将导致出现HTTP的406错误。
 
+**【示例代码】**
 
+**cn.tedu.springmvc.vo.UserVO**
 
-```
-{
-	"username": "administrator",
-	"password": "1234567890",
-	"email": "admin@tedu.cn"
+```java
+package cn.tedu.springmvc.vo;
+
+public class UserVO {
+
+    private String username;
+    private String password;
+    private String email;
+
+    // 请自行补充以上3个属性的Setter & Getter
 }
 ```
+
+`UserController`的代码片段：
+
+```java
+// http://localhost:8080/springmvc01_war_exploded/user/info.do
+@GetMapping("/info.do")
+public UserVO info() {
+    UserVO userVO = new UserVO();
+    userVO.setUsername("chengheng");
+    userVO.setPassword("1234567890");
+    userVO.setEmail("chengheng@qq.com");
+    return userVO;
+}
+```
+
+
+
+
+
+
 
 
 
