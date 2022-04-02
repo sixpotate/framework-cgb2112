@@ -16,7 +16,14 @@ public class UserController {
     @RequestMapping(value = "/login.do",
             method = {RequestMethod.POST, RequestMethod.GET})
     public String login() {
-        return "OK";
+        String username = "xx";
+        String password = "xx";
+        String email = "xx";
+        return "{" +
+                "\"username\": \"" +username+ "\"," +
+                "\"password\": \"" +password+ "\"," +
+                "\"email\": \"" +email+ "\"" +
+                "}";
     }
 
 }
