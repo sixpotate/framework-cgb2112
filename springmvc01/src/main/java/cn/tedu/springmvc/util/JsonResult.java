@@ -6,6 +6,8 @@ public class JsonResult<T> {
     private String message; // 消息
     private T data; // 数据
 
+    private JsonResult() { }
+
     public static JsonResult<Void> ok() {
         return ok(null);
     }

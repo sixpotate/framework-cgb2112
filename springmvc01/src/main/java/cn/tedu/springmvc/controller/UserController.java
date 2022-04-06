@@ -16,9 +16,16 @@ public class UserController {
         System.out.println("UserController.UserController()");
     }
 
+    @GetMapping("/npe.do")
+    public String npe(String username) {
+        username.toString();
+        return "HAHAHA";
+    }
+
     // http://localhost:8080/springmvc01_war_exploded/user/login.do?username=root&password=123456
     @RequestMapping("/login.do")
     public JsonResult<Void> login(String username, String password) {
+        username.toString();
         System.out.println("username = " + username + ", password = " + password);
         // 假设 admin / 888888 是正确的 用户名 / 密码
         // 判断用户名

@@ -457,47 +457,100 @@ public UserVO list() {
 
 通常，在项目开发中，会定义一个“通用”的数据类型，无论是哪个控制器的哪个处理请求的方法，最终都将返回此类型！
 
+显示的通用返回类型如下：
+
 ```java
-public class Xxx {
+public class JsonResult<T> {
+
     private Integer state; // 业务返回码
     private String message; // 消息
-    private Object data;
+    private T data; // 数据
+
+    private JsonResult() { }
+
+    public static JsonResult<Void> ok() {
+        return ok(null);
+    }
+
+    public static <T> JsonResult<T> ok(T data) {
+        JsonResult<T> jsonResult = new JsonResult<>();
+        jsonResult.state = State.OK.getValue();
+        jsonResult.data = data;
+        return jsonResult;
+    }
+
+    public static JsonResult<Void> fail(State state, String message) {
+        JsonResult<Void> jsonResult = new JsonResult<>();
+        jsonResult.state = state.getValue();
+        jsonResult.message = message;
+        return jsonResult;
+    }
+
+   public enum State {
+       OK(20000),
+       ERR_USERNAME(40400),
+       ERR_PASSWORD(40600);
+
+       Integer value;
+
+       State(Integer value) {
+           this.value = value;
+       }
+
+       public Integer getValue() {
+           return value;
+       }
+   }
+
+   // Setters & Getters
+
 }
 ```
 
-```java
-Xxx xxx = new Xxx();
-xxx.state = 1;
-xxx.message = "注册失败，用户名已经被占用！";
-xxx.data = new Article();
-return xxx;
-```
+## 9. 统一处理异常
+
+Spring MVC框架提供了统一处理异常的机制，使得特定种类的异常对应一段特定的代码，后续，当编写代码时，无论在任何位置，都可以将异常直接抛出，由统一处理异常的代码进行处理即可！
+
+关于统一处理异常，需要自定义方法对异常进行处理，关于此方法：
+
+- 注解：需要添加`@ExceptionHandler`注解
+- 访问权限：应该是公有的
+- 返回值类型：可参考处理请求的方法的返回值类型
+- 方法名称：自定义
+- 参数列表：必须包含1个异常类型的参数，并且可按需添加`HttpServletRequest`、`HttpServletResponse`等少量特定的类型的参数，不可以随意添加参数
+
+例如：
 
 ```java
-{
-    "state": 444,
-    "message": "注册失败，用户名已经被占用！"
+@ExceptionHandler
+public String handleException(NullPointerException e) {
+    return "Error, NullPointerException!";
 }
 ```
 
+需要注意：以上处理异常的代码，只能作用于当前控制器类中各个处理请求的方法，对其它控制器类的中代码并不产生任何影响，也就无法处理其它控制类中处理请求时出现的异常！
 
+为保证更合理的处理异常，应该：
 
+- 将处理异常的代码放在专门的类中
+- 在此类上添加`@ControllerAdvice`注解
+  - 由于目前主流的响应方式都是“响应正文”的，则可以将`@ControllerAdvice`替换为`@RestControllerAdvice`
+
+所以，可以创建`GlobalExceptionHandler`类，代码如下：
+
+```java
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler
+    public String handleException(NullPointerException e) {
+        return "Error, NullPointerException!";
+    }
+
+}
 ```
-100：就绪
 
-200：成功
-
-301 / 302：重定向
-
-400：请求参数有误
-401：后续学习再讲
-403：后续学习再讲
-404：请求资源不存在
-405：请求方式错误
-406：请求头不可接受
-
-500：服务器内部错误
-```
+另外，可以将处理异常的代码放在所有控制器类公共的父类中，则各控制器类都相当于有此代码，则处理异常的代码可以作用于所有控制器中处理请求的方法！但不推荐此做法。
 
 
 
@@ -505,7 +558,7 @@ return xxx;
 
 
 
-# 课间休息，11:20上课
+
 
 
 
