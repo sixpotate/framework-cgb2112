@@ -11,16 +11,19 @@ public class GlobalExceptionHandler {
             ClassCastException.class
     })
     public String handleNullPointerException(Throwable e) {
+        e.printStackTrace();
         return "Error, NullPointerException or ClassCastException!";
     }
 
     @ExceptionHandler(NumberFormatException.class)
     public String handleNumberFormatException(Throwable e) {
+        e.printStackTrace();
         return "Error, NumberFormatException!";
     }
 
     @ExceptionHandler(Throwable.class)
     public String handleThrowable(Throwable e) {
+        e.printStackTrace();
         return "Error, Throwable!";
     }
 

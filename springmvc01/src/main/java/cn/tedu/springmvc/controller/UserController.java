@@ -16,10 +16,10 @@ public class UserController {
         System.out.println("UserController.UserController()");
     }
 
-    @GetMapping("/npe.do")
+    @GetMapping(value = "/npe.do", produces = "text/html; charset=UTF-8")
     public String npe(String username) {
         username.toString();
-        return "HAHAHA";
+        return "哈哈";
     }
 
     // http://localhost:8080/springmvc01_war_exploded/user/login.do?username=root&password=123456
