@@ -13,4 +13,10 @@ public class CartController {
         return "OK";
     }
 
+    @RequestMapping("/delete.do")
+    public String delete(String id) {
+        Long.valueOf(id);
+        return "OK";
+    }
+
 }

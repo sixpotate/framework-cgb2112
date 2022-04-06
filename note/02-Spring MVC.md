@@ -552,6 +552,67 @@ public class GlobalExceptionHandler {
 
 另外，可以将处理异常的代码放在所有控制器类公共的父类中，则各控制器类都相当于有此代码，则处理异常的代码可以作用于所有控制器中处理请求的方法！但不推荐此做法。
 
+在以上处理异常的过程中，Spring MVC的处理模式**大致**如下：
+
+```java
+try {
+	userController.npe();
+} catch (NullPointerException e) {
+	globalExceptionHandler.handleException(e);
+}
+```
+
+关于以上处理的方法的参数中的异常类型，将对应Spring MVC框架能够统一处理的异常类型，例如将其声明为`Throwable`时，所有异常都可被此方法进行处理！但是，在处理过程中，应该判断当前异常对象所归属的类型，以针对不同类型的异常进行不同的处理！
+
+需要注意：允许存在多个统一处理异常的方法，例如：
+
+```java
+@ExceptionHandler
+public String handleNullPointerException(NullPointerException e) {
+    return "Error, NullPointerException!";
+}
+
+@ExceptionHandler
+public String handleNumberFormatException(NumberFormatException e) {
+    return "Error, NumberFormatException!";
+}
+
+@ExceptionHandler
+public String handleThrowable(Throwable e) {
+    e.printStackTrace();
+    return "Error, Throwable!";
+}
+```
+
+并且，如果某个异常能够被多个方法处理（异常类型符合多个处理异常的方法的参数类型），则优先执行最能精准匹配的处理异常的方法，例如，当出现`NullPointerException`时，将执行`handleNullPointerException()`而不会执行`handleThrowable()`！
+
+**在开发实践中**，通常都会有`handleThrowable()`方法，以避免某个异常没有被处理而导致500错误！
+
+关于`@ExceptionHandler`注解，可用于表示被注解的方法是用于统一处理异常的，而且，可用于配置被注解的方法能够处理的异常的类型，其效力的优先级高于在方法的参数上指定异常类型。
+
+**在开发实践中**，建议为每一个`@ExceptionHandler`配置注解参数，在注解参数中指定需要处理异常的类型，而处理异常的方法的参数直接使用`Throwable`即可。
+
+例如：
+
+```java
+@ExceptionHandler({
+        NullPointerException.class,
+        ClassCastException.class
+})
+public String handleNullPointerException(Throwable e) {
+    return "Error, NullPointerException or ClassCastException!";
+}
+
+@ExceptionHandler(NumberFormatException.class)
+public String handleNumberFormatException(Throwable e) {
+    return "Error, NumberFormatException!";
+}
+
+@ExceptionHandler(Throwable.class)
+public String handleThrowable(Throwable e) {
+    return "Error, Throwable!";
+}
+```
 
 
 
@@ -565,6 +626,15 @@ public class GlobalExceptionHandler {
 
 
 
+
+
+
+
+
+
+```
+NoSuchBeanDefinitionException
+```
 
 
 
