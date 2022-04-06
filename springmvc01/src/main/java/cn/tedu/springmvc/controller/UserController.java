@@ -24,9 +24,7 @@ public class UserController {
     @RequestMapping("/reg.do")
     public JsonResult<Void> reg(UserRegDTO userRegDTO) {
         System.out.println(userRegDTO);
-        JsonResult<Void> jsonResult = new JsonResult();
-        jsonResult.setState(JsonResult.State.OK.getValue()); // 语义
-        return jsonResult;
+        return JsonResult.ok();
     }
 
     // http://localhost:8080/springmvc01_war_exploded/user/3/info.do
@@ -37,10 +35,8 @@ public class UserController {
         userVO.setUsername("chengheng");
         userVO.setPassword("1234567890");
         userVO.setEmail("chengheng@qq.com");
-        JsonResult<UserVO> jsonResult = new JsonResult<>();
-        jsonResult.setState(20000);
-        jsonResult.setData(userVO);
-        return jsonResult;
+
+        return JsonResult.ok(userVO);
     }
 
     // http://localhost:8080/springmvc01_war_exploded/user/liucs/info.do

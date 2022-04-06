@@ -6,6 +6,17 @@ public class JsonResult<T> {
     private String message; // 消息
     private T data; // 数据
 
+    public static JsonResult<Void> ok() {
+        return ok(null);
+    }
+
+    public static <T> JsonResult<T> ok(T data) {
+        JsonResult<T> jsonResult = new JsonResult<>();
+        jsonResult.state = State.OK.getValue();
+        jsonResult.data = data;
+        return jsonResult;
+    }
+
    public enum State {
        OK(20000),
        ERR_USERNAME(40400),
