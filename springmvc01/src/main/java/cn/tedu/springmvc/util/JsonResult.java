@@ -6,6 +6,22 @@ public class JsonResult<T> {
     private String message; // 消息
     private T data; // 数据
 
+   public enum State {
+       OK(20000),
+       ERR_USERNAME(40400),
+       ERR_PASSWORD(40600);
+
+       Integer value;
+
+       State(Integer value) {
+           this.value = value;
+       }
+
+       public Integer getValue() {
+           return value;
+       }
+   }
+
     public Integer getState() {
         return state;
     }

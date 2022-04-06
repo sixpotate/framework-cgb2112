@@ -22,9 +22,11 @@ public class UserController {
 
     // http://localhost:8080/springmvc01_war_exploded/user/reg.do?username=root&password=123456&age=25
     @RequestMapping("/reg.do")
-    public String reg(UserRegDTO userRegDTO) {
+    public JsonResult<Void> reg(UserRegDTO userRegDTO) {
         System.out.println(userRegDTO);
-        return "OK";
+        JsonResult<Void> jsonResult = new JsonResult();
+        jsonResult.setState(JsonResult.State.OK.getValue()); // 语义
+        return jsonResult;
     }
 
     // http://localhost:8080/springmvc01_war_exploded/user/3/info.do
