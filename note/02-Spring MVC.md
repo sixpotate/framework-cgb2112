@@ -216,7 +216,7 @@ GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
 
 所以，在实际应用中，在类的上方肯定使用`@RequestMapping`（其它的`@XxxMapping`不可以加在类上），方法上一般都使用`@GetMapping`、`@PostMapping`等注解，除非在极特殊的情况下，某些请求同时允许多种请求方式，才会在方法上使用`@RequestMapping`。
 
-# 5. 关于`@ResponseBody`注解
+## 5. 关于`@ResponseBody`注解
 
 `@ResponseBody`注解表示：响应正文。
 
@@ -306,8 +306,11 @@ public String reg(String username, String password, Integer age) {
 需要注意：
 
 - 如果客户端提交的请求中根本没有匹配名称的参数，则以上获取到的值将是`null`
+  - 例如：http://localhost/user/login.do
 - 如果客户端仅提交了参数名称，却没有值，则以上获取到的值将是`""`（长度为0的字符串）
+  - 例如：http://localhost/user/login.do?username=&password=&age=
 - 如果客户端提交了匹配名称的参数，并且值是有效的，则可以获取到值
+  - 例如：http://localhost/user/login.do?username=admin&password=1234&age=27
 - 以上名称应该是由服务器端决定的，客户端需要根据以上名称来提交请求参数
 - 声明参数时，可以按需将参数声明成期望的类型，例如以上将`age`声明为`Integer`类型
   - 注意：声明成`String`以外的类型时，应该考虑是否可以成功转换类型
@@ -448,7 +451,64 @@ public UserVO list() {
 
 最终执行时，如果使用`/user/list/info.do`，则会匹配到以上代码中的最后一个方法，并不会因为这个URL还能匹配第2个方法配置的`{username:[a-zA-Z]+}`而产生冲突。所以，使用了占位符的做法并不影响精准匹配的路径。
 
+## 8. 关于响应正文时的结果类型
 
+当响应正文时，只要方法的返回值是自定义的数据类型，则Spring MVC框架就一定会调用`jackson-databind`中的转换器，就可以将结果转换为JSON格式的字符串！
+
+通常，在项目开发中，会定义一个“通用”的数据类型，无论是哪个控制器的哪个处理请求的方法，最终都将返回此类型！
+
+```java
+public class Xxx {
+    private Integer state; // 业务返回码
+    private String message; // 消息
+    private Object data;
+}
+```
+
+```java
+Xxx xxx = new Xxx();
+xxx.state = 1;
+xxx.message = "注册失败，用户名已经被占用！";
+xxx.data = new Article();
+return xxx;
+```
+
+```java
+{
+    "state": 444,
+    "message": "注册失败，用户名已经被占用！"
+}
+```
+
+
+
+```
+100：就绪
+
+200：成功
+
+301 / 302：重定向
+
+400：请求参数有误
+401：后续学习再讲
+403：后续学习再讲
+404：请求资源不存在
+405：请求方式错误
+406：请求头不可接受
+
+500：服务器内部错误
+
+
+
+
+
+
+
+
+
+
+
+```
 
 
 
