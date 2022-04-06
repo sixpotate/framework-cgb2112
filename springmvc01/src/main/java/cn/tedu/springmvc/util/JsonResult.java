@@ -17,6 +17,13 @@ public class JsonResult<T> {
         return jsonResult;
     }
 
+    public static JsonResult<Void> fail(State state, String message) {
+        JsonResult<Void> jsonResult = new JsonResult<>();
+        jsonResult.state = state.getValue();
+        jsonResult.message = message;
+        return jsonResult;
+    }
+
    public enum State {
        OK(20000),
        ERR_USERNAME(40400),
