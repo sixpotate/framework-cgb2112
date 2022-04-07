@@ -1,5 +1,6 @@
 package cn.tedu.springmvc.config;
 
+import cn.tedu.springmvc.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -14,7 +15,8 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        WebMvcConfigurer.super.addInterceptors(registry);
+       registry.addInterceptor(new LoginInterceptor())
+               .addPathPatterns("/user/login.do");
 
     }
 }
